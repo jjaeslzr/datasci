@@ -5,58 +5,58 @@ date: "01 June 2026"
 output: html_document
 ---
 ## **Step 1** | Install tidyverse and load.
-```
-install.packages("tidyverse")
+```{r setup}
+install.packages("tidyverse", repos = "https://cloud.r-project.org")
 library(tidyverse)
 ```
 
 ## **Step 2** | Read in the CSV file as a dataframe.
-```
-habs <- read.csv("C:/Users/sjahm/Downloads/DLSU Files/Year 3 Term 3/LBBBI27/Activity 4/habitat_types.csv")
+```{r}
+habs <- read.csv("D:/Files/DLSU Files/Year 3 Term 3/LBBBI27/Activity 4/habitat_types.csv")
 ```
 
 ## **Step 3** | Show the data structure using the tidyverse equivalent of the “str” base R.
-```
+```{r}
 habs |> glimpse()
 ```
 
 ## **Step 4** | Subset the data by taking only the following columns: Transect, Hatypes, SmallTrees, and FloweringTrees.
-```
+```{r}
 habsubset <- select(habs, Transect, Htypes, SmallTrees, FloweringTrees)
 habsubset |> glimpse()
 ```
 
 ## **Step 5** | From the subset of data, filter the habitat type “CVT” and sort the “SmallTrees” variable in descending order.
-```
+```{r}
 habsubset |>
 	filter(Htypes == "CVT") |>
 	arrange(desc(SmallTrees))
 ```
 
 ## **Step 6** | Also, calculate the mean number of flowering trees per habitat type.
-```
+```{r}
 habsubset |>
 	group_by(Htypes) |>
 	summarize(mean(FloweringTrees))
 ```
 
 ## **Step 7** | In your subset of data (e.g., from step #4), add a new column showing the difference between HerbsCover and GroundCover. Name the new column as “HerbGroundDiff.” Make sure to assign the output of this step to a new variable called “sel_df_mod.”
-```
+```{r}
 habsubset |>
 	mutate(HerbGroundDiff = habs$HerbsCover - habs$GroundCover) ->
 	sel_df_mod
 ```
 ## *to check*
-```
+```{r}
 sel_df_mod
 ```
 ## *to answer the question*
-```
+```{r}
 sel_df_mod |> filter(HerbGroundDiff == 0)
 ```
 
 ## **Step 8** | Convert your self_df_mod output to a wider version (i.e., using pivot_wider). The output should have columns like: SmallTrees_ESG, FloweringTrees_ESG, HerbGroundDiff_ESG, SmallTrees_CVT, FloweringTrees_CVT, etc.
-```
+```{r}
 sel_df_mod |> pivot_wider(names_from = Htypes, values_from = c(SmallTrees, FloweringTrees, HerbGroundDiff))
 ```
 

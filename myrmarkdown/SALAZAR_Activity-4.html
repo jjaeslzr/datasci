@@ -359,39 +359,93 @@ display: none;
 
 <div id="step-1-install-tidyverse-and-load." class="section level2">
 <h2><strong>Step 1</strong> | Install tidyverse and load.</h2>
-<pre><code>install.packages(&quot;tidyverse&quot;)
-library(tidyverse)</code></pre>
+<pre class="r"><code>install.packages(&quot;tidyverse&quot;, repos = &quot;https://cloud.r-project.org&quot;)</code></pre>
+<pre><code>## Installing package into &#39;C:/Users/sjahm/AppData/Local/R/win-library/4.6&#39;
+## (as &#39;lib&#39; is unspecified)</code></pre>
+<pre><code>## package &#39;tidyverse&#39; successfully unpacked and MD5 sums checked
+## 
+## The downloaded binary packages are in
+##  C:\Users\sjahm\AppData\Local\Temp\Rtmpm8IlK8\downloaded_packages</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.2.1     ✔ readr     2.2.0
+## ✔ forcats   1.0.1     ✔ stringr   1.6.0
+## ✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+## ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+## ✔ purrr     1.2.2</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
 <div id="step-2-read-in-the-csv-file-as-a-dataframe." class="section level2">
 <h2><strong>Step 2</strong> | Read in the CSV file as a dataframe.</h2>
-<pre><code>habs &lt;- read.csv(&quot;C:/Users/sjahm/Downloads/DLSU Files/Year 3 Term 3/LBBBI27/Activity 4/habitat_types.csv&quot;)</code></pre>
+<pre class="r"><code>habs &lt;- read.csv(&quot;D:/Files/DLSU Files/Year 3 Term 3/LBBBI27/Activity 4/habitat_types.csv&quot;)</code></pre>
 </div>
 <div id="step-3-show-the-data-structure-using-the-tidyverse-equivalent-of-the-str-base-r." class="section level2">
 <h2><strong>Step 3</strong> | Show the data structure using the
 tidyverse equivalent of the “str” base R.</h2>
-<pre><code>habs |&gt; glimpse()</code></pre>
+<pre class="r"><code>habs |&gt; glimpse()</code></pre>
+<pre><code>## Rows: 47
+## Columns: 16
+## $ Transect       &lt;chr&gt; &quot;IT1P0&quot;, &quot;IT1P1&quot;, &quot;IT1P2&quot;, &quot;IT1P3&quot;, &quot;IT1P4&quot;, &quot;IT1P5&quot;, &quot;…
+## $ Htypes         &lt;chr&gt; &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;,…
+## $ LargeTrees     &lt;int&gt; 3, 0, 0, 0, 1, 3, 1, 1, 1, 2, 1, 3, 1, 2, 1, 0, 5, 1, 0…
+## $ MediumTrees    &lt;int&gt; 10, 3, 1, 1, 3, 6, 2, 1, 1, 5, 5, 8, 4, 5, 7, 4, 4, 0, …
+## $ SmallTrees     &lt;int&gt; 20, 15, 10, 15, 15, 4, 16, 13, 3, 4, 7, 10, 10, 4, 10, …
+## $ Palms          &lt;int&gt; 3, 0, 0, 0, 0, 4, 4, 4, 5, 3, 6, 0, 26, 25, 10, 5, 10, …
+## $ Rattan         &lt;int&gt; 3, 0, 0, 1, 1, 0, 5, 0, 1, 0, 3, 3, 1, 10, 2, 0, 0, 0, …
+## $ Pandan         &lt;int&gt; 5, 0, 2, 2, 3, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 3, 0, 0, 0…
+## $ HerbsCover     &lt;int&gt; 20, 3, 5, 2, 30, 50, 60, 60, 40, 10, 60, 50, 20, 50, 50…
+## $ BambooCover    &lt;int&gt; 5, 0, 3, 3, 0, 10, 10, 10, 0, 10, 5, 0, 0, 5, 0, 3, 5, …
+## $ RockCover      &lt;int&gt; 3, 50, 10, 1, 15, 50, 30, 80, 20, 50, 90, 80, 80, 70, 9…
+## $ GroundCover    &lt;int&gt; 30, 40, 60, 30, 40, 50, 20, 10, 5, 30, 20, 20, 20, 20, …
+## $ WaterDistance  &lt;int&gt; 100, 0, 0, 0, 0, 0, 0, 5, 0, 0, 10, 0, 5, 4, 6, 3, 3, 3…
+## $ FallenTrees    &lt;int&gt; 1, 0, 2, 0, 0, 0, 2, 0, 1, 2, 0, 2, 2, 1, 0, 0, 0, 0, 0…
+## $ FruitTrees     &lt;int&gt; 3, 2, 5, 3, 3, 3, 3, 3, 2, 4, 6, 6, 8, 5, 4, 3, 7, 5, 4…
+## $ FloweringTrees &lt;int&gt; 10, 3, 6, 5, 5, 4, 4, 4, 3, 3, 8, 9, 6, 3, 3, 6, 6, 7, …</code></pre>
 </div>
 <div id="step-4-subset-the-data-by-taking-only-the-following-columns-transect-hatypes-smalltrees-and-floweringtrees." class="section level2">
 <h2><strong>Step 4</strong> | Subset the data by taking only the
 following columns: Transect, Hatypes, SmallTrees, and
 FloweringTrees.</h2>
-<pre><code>habsubset &lt;- select(habs, Transect, Htypes, SmallTrees, FloweringTrees)
+<pre class="r"><code>habsubset &lt;- select(habs, Transect, Htypes, SmallTrees, FloweringTrees)
 habsubset |&gt; glimpse()</code></pre>
+<pre><code>## Rows: 47
+## Columns: 4
+## $ Transect       &lt;chr&gt; &quot;IT1P0&quot;, &quot;IT1P1&quot;, &quot;IT1P2&quot;, &quot;IT1P3&quot;, &quot;IT1P4&quot;, &quot;IT1P5&quot;, &quot;…
+## $ Htypes         &lt;chr&gt; &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;, &quot;ESG&quot;,…
+## $ SmallTrees     &lt;int&gt; 20, 15, 10, 15, 15, 4, 16, 13, 3, 4, 7, 10, 10, 4, 10, …
+## $ FloweringTrees &lt;int&gt; 10, 3, 6, 5, 5, 4, 4, 4, 3, 3, 8, 9, 6, 3, 3, 6, 6, 7, …</code></pre>
 </div>
 <div id="step-5-from-the-subset-of-data-filter-the-habitat-type-cvt-and-sort-the-smalltrees-variable-in-descending-order." class="section level2">
 <h2><strong>Step 5</strong> | From the subset of data, filter the
 habitat type “CVT” and sort the “SmallTrees” variable in descending
 order.</h2>
-<pre><code>habsubset |&gt;
+<pre class="r"><code>habsubset |&gt;
     filter(Htypes == &quot;CVT&quot;) |&gt;
     arrange(desc(SmallTrees))</code></pre>
+<pre><code>##   Transect Htypes SmallTrees FloweringTrees
+## 1    IT2P7    CVT         10              3
+## 2    IT3P0    CVT         10              6
+## 3    IT3P1    CVT          5              6
+## 4    IT2P6    CVT          4              3
+## 5    IT3P2    CVT          0              7
+## 6    IT3P3    CVT          0              6
+## 7    IT3P4    CVT          0             31</code></pre>
 </div>
 <div id="step-6-also-calculate-the-mean-number-of-flowering-trees-per-habitat-type." class="section level2">
 <h2><strong>Step 6</strong> | Also, calculate the mean number of
 flowering trees per habitat type.</h2>
-<pre><code>habsubset |&gt;
+<pre class="r"><code>habsubset |&gt;
     group_by(Htypes) |&gt;
     summarize(mean(FloweringTrees))</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   Htypes `mean(FloweringTrees)`
+##   &lt;chr&gt;                   &lt;dbl&gt;
+## 1 ASG                      5.26
+## 2 CVT                      8.86
+## 3 ESG                      5.38</code></pre>
 </div>
 <div id="step-7-in-your-subset-of-data-e.g.-from-step-4-add-a-new-column-showing-the-difference-between-herbscover-and-groundcover.-name-the-new-column-as-herbgrounddiff.-make-sure-to-assign-the-output-of-this-step-to-a-new-variable-called-sel_df_mod." class="section level2">
 <h2><strong>Step 7</strong> | In your subset of data (e.g., from step
@@ -399,24 +453,99 @@ flowering trees per habitat type.</h2>
 GroundCover. Name the new column as “HerbGroundDiff.” Make sure to
 assign the output of this step to a new variable called
 “sel_df_mod.”</h2>
-<pre><code>habsubset |&gt;
+<pre class="r"><code>habsubset |&gt;
     mutate(HerbGroundDiff = habs$HerbsCover - habs$GroundCover) -&gt;
     sel_df_mod</code></pre>
 </div>
 <div id="to-check" class="section level2">
 <h2><em>to check</em></h2>
-<pre><code>sel_df_mod</code></pre>
+<pre class="r"><code>sel_df_mod</code></pre>
+<pre><code>##    Transect Htypes SmallTrees FloweringTrees HerbGroundDiff
+## 1     IT1P0    ESG         20             10            -10
+## 2     IT1P1    ESG         15              3            -37
+## 3     IT1P2    ESG         10              6            -55
+## 4     IT1P3    ESG         15              5            -28
+## 5     IT1P4    ESG         15              5            -10
+## 6     IT1P5    ESG          4              4              0
+## 7     IT1P6    ESG         16              4             40
+## 8     IT2P0    ESG         13              4             50
+## 9     IT2P1    ESG          3              3             35
+## 10    IT2P2    ESG          4              3            -20
+## 11    IT2P3    ESG          7              8             40
+## 12    IT2P4    ESG         10              9             30
+## 13    IT2P5    ESG         10              6              0
+## 14    IT2P6    CVT          4              3             30
+## 15    IT2P7    CVT         10              3             30
+## 16    IT3P0    CVT         10              6            -15
+## 17    IT3P1    CVT          5              6              0
+## 18    IT3P2    CVT          0              7            -15
+## 19    IT3P3    CVT          0              6            -58
+## 20    IT3P4    CVT          0             31           -100
+## 21    ST1P0    ASG         16              3            -20
+## 22    ST1P1    ASG         10              2            -30
+## 23    ST1P2    ASG          8              4              0
+## 24    ST1P3    ASG         13              3              0
+## 25    ST1P4    ASG         10              1            -30
+## 26    ST1P5    ASG         11              3            -30
+## 27    ST1P6    ASG         16              3            -10
+## 28    ST1P7    ASG         10              1              0
+## 29    ST1P8    ASG         13              1            -20
+## 30    ST2P0    ASG          4              9             10
+## 31    ST2P1    ASG          3              8             20
+## 32    ST2P2    ASG          7              8             15
+## 33    ST2P3    ASG          8              8             10
+## 34    ST2P4    ASG          2              7            -10
+## 35    ST2P5    ASG         10              6              0
+## 36    ST2P6    ASG          0              6             -5
+## 37    ST2P7    ASG          5              6            -15
+## 38    ST2P8    ASG          7              9            -20
+## 39    ST3P0    ASG          8              5             10
+## 40    ST3P1    ASG          3              2              0
+## 41    ST3P2    ASG          8              6              0
+## 42    ST3P3    ASG          9              7            -35
+## 43    ST3P4    ASG          9              6            -30
+## 44    ST3P5    ASG         14              3            -30
+## 45    ST3P6    ASG          6              9            -50
+## 46    ST3P7    ASG          3             10            -70
+## 47    ST3P8    ASG          3              6            -60</code></pre>
 </div>
 <div id="to-answer-the-question" class="section level2">
 <h2><em>to answer the question</em></h2>
-<pre><code>sel_df_mod |&gt; filter(HerbGroundDiff == 0)</code></pre>
+<pre class="r"><code>sel_df_mod |&gt; filter(HerbGroundDiff == 0)</code></pre>
+<pre><code>##   Transect Htypes SmallTrees FloweringTrees HerbGroundDiff
+## 1    IT1P5    ESG          4              4              0
+## 2    IT2P5    ESG         10              6              0
+## 3    IT3P1    CVT          5              6              0
+## 4    ST1P2    ASG          8              4              0
+## 5    ST1P3    ASG         13              3              0
+## 6    ST1P7    ASG         10              1              0
+## 7    ST2P5    ASG         10              6              0
+## 8    ST3P1    ASG          3              2              0
+## 9    ST3P2    ASG          8              6              0</code></pre>
 </div>
 <div id="step-8-convert-your-self_df_mod-output-to-a-wider-version-i.e.-using-pivot_wider.-the-output-should-have-columns-like-smalltrees_esg-floweringtrees_esg-herbgrounddiff_esg-smalltrees_cvt-floweringtrees_cvt-etc." class="section level2">
 <h2><strong>Step 8</strong> | Convert your self_df_mod output to a wider
 version (i.e., using pivot_wider). The output should have columns like:
 SmallTrees_ESG, FloweringTrees_ESG, HerbGroundDiff_ESG, SmallTrees_CVT,
 FloweringTrees_CVT, etc.</h2>
-<pre><code>sel_df_mod |&gt; pivot_wider(names_from = Htypes, values_from = c(SmallTrees, FloweringTrees, HerbGroundDiff))</code></pre>
+<pre class="r"><code>sel_df_mod |&gt; pivot_wider(names_from = Htypes, values_from = c(SmallTrees, FloweringTrees, HerbGroundDiff))</code></pre>
+<pre><code>## # A tibble: 47 × 10
+##    Transect SmallTrees_ESG SmallTrees_CVT SmallTrees_ASG FloweringTrees_ESG
+##    &lt;chr&gt;             &lt;int&gt;          &lt;int&gt;          &lt;int&gt;              &lt;int&gt;
+##  1 IT1P0                20             NA             NA                 10
+##  2 IT1P1                15             NA             NA                  3
+##  3 IT1P2                10             NA             NA                  6
+##  4 IT1P3                15             NA             NA                  5
+##  5 IT1P4                15             NA             NA                  5
+##  6 IT1P5                 4             NA             NA                  4
+##  7 IT1P6                16             NA             NA                  4
+##  8 IT2P0                13             NA             NA                  4
+##  9 IT2P1                 3             NA             NA                  3
+## 10 IT2P2                 4             NA             NA                  3
+## # ℹ 37 more rows
+## # ℹ 5 more variables: FloweringTrees_CVT &lt;int&gt;, FloweringTrees_ASG &lt;int&gt;,
+## #   HerbGroundDiff_ESG &lt;int&gt;, HerbGroundDiff_CVT &lt;int&gt;,
+## #   HerbGroundDiff_ASG &lt;int&gt;</code></pre>
 </div>
 
 
