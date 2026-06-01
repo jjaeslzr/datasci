@@ -6,32 +6,32 @@ output: html_document
 ---
 # *Descriptive statistics*
 ## **Step 1** | Read in the CSV file as a dataframe using the function “read.csv”. Make sure to clean the data prior to performing the tasks below. Do not attempt to clean the data in Excel. Perform all cleaning (e.g., NA removal) in R using the code we discussed.
-```
-herpedata <- data.frame(read.csv("C:/Users/sjahm/Downloads/DLSU Files/Year 3 Term 3/LBBBI27/Activity 3/herpetozoa-033-095-s001.csv"))
+```{r}
+herpedata <- data.frame(read.csv("D:/Files//DLSU Files/Year 3 Term 3/LBBBI27/Activity 3/herpetozoa-033-095-s001.csv"))
 cleaningdata <- complete.cases(herpedata)
 herpeclean <- herpedata[cleaningdata, ]
 herpeclean
 ```
 
 ## **Step 2** | Show the data structure.
-```
+```{r}
 class(herpeclean)
 ```
 
 ## **Step 3** | Subset the elevation data and provide the mean, standard deviation, and range.
-```
+```{r}
 elevation <- herpeclean["Elev"]
 elevationdata <- c(sapply(elevation, mean), sapply(elevation, sd), sapply(elevation, range))
 elevationdata
 ```
 
 ## **Step 4** | Subset the species data (columns G to AG) and count the total number of observations per species. Show two methods, using a typical loop and a compact loop.
-```
+```{r}
 names(herpeclean)
 speciesdata <- herpeclean[, 7:33]
 ```
 ## *Typical loop*
-```
+```{r}
 ## Placeholder to create the speciestotals object for use in the typical loop
 speciestotals <- 0
 for(i in seq_len(ncol(speciesdata))) {
@@ -43,7 +43,7 @@ speciestotal
 ```
 
 ## *Compact loop*
-```
+```{r}
 speciestotal <- matrix(sapply(speciesdata, sum))
 dimnames(speciestotal) <- list(names(speciesdata), "Total")
 speciestotal
@@ -51,7 +51,7 @@ speciestotal
 ```
 
 ## **Step 5** | Combine the columns of species with the most and fewest observations with habitat types (Htypes). Determine the mean count of these species in each habitat type.
-```
+```{r}
 specieshabitats <- herpeclean[c("Htypes", "Phlo", "Babu", "Geat", "Hety", "Bosc", "Drru", "Apbo")]
 specieshabitats
 
@@ -75,14 +75,15 @@ habitatdata
 ```
 # *Graphical representation*
 ## **Step 1** | From the original dataframe, combine the species total count column (SPPTotal) with the elevation and habitat type columns and create a scatter plot where elevation should be on the x-axis, while species total count is on the y-axis. Change the point colors based on habitat type.
-```
+```{r scat, fig.width = 4, fig.height = 3}
 plotdata <- herpeclean[4:6]
 colors <- c(ASG = "red", CVT = "blue", ESG = "green", OGF = "yellow")
 ## Generate scatterplot
 plot(plotdata$Elev, plotdata$SPPTotal, col = colors[plotdata$Htypes], main = "Species Totals per Elevation", xlab = "Elevation", ylab = "Species Totals")
 ```
+
 ## **Step 2** | From the combined data of species total counts, elevation, and habitat types, determine the total/sum number of species observed per habitat, and create a bar plot (use the bar plot help) where the x-axis shows the habitat types and the y-axis shows the total species.
-```
+```{r bar, fig.width = 4, fig.height = 3}
 ASGtotal <- plotdata[plotdata$Htypes == "ASG", -(1:2)]
 ESGtotal <- plotdata[plotdata$Htypes == "ESG", -(1:2)]
 CVTtotal <- plotdata[plotdata$Htypes == "CVT", -(1:2)]
@@ -94,7 +95,7 @@ barplot(bardata, main = "Species Totals per Habitat Type", xlab = "Habitat Types
 ```
 
 ## **Step 3** | Lastly, create a histogram of total species counts using the histogram function. Make sure all axes are properly labeled.
-```
+```{r hist, fig.width = 4, fig.height = 3}
 hist(plotdata$SPPTotal, main = "Total Species Counts", xlab = "Total Species Counts", ylab = "Frequency")
 ```
 
