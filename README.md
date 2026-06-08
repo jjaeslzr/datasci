@@ -6,3 +6,5 @@ This repository contains files from projects in our LIFEDAT/LBBBI27 classes for 
 **Activity 3: Summary statistics, frequency distribution, and basic graphical representation**: [https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_act03.html](https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_act03.html)
 
 **Activity 4: Tidyverse**: [https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_Activity-4.html](https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_Activity-4.html)
+
+**Activity 7: Clustering (K-means)**: [https://jjaeslzr.github.io/datasci/myrmarkdown/Salazar_K-means.html](https://jjaeslzr.github.io/datasci/myrmarkdown/Salazar_K-means.html)
