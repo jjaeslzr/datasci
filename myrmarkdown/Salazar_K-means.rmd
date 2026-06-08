@@ -69,7 +69,9 @@ fviz_nbclust(
 ```
 ```{r, fig.width=6, fig.height=4}
 plot(1:10, ss, type = "b", pch = 19, frame = FALSE, 
-        main = "Elbow Method")
+        xlab="Number of clusters k",
+        ylab="Total Within Sum of Square",
+        main = "Optimal Number of Clusters")
 ```
 
 ## Step 3: Recreate steps 6–8 above using the optimal K determined by the elbow curve.
