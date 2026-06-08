@@ -1,0 +1,88 @@
+---
+title: "Activity 7: Clustering (K-means)"
+author: "Jae Salazar"
+date: "2026-06-08"
+output: html_document
+---
+
+# K-means (single K)
+## Step 2: Read in the morphology data as a dataframe.
+```{r}
+morphodata <- read.csv("D:/Files/DLSU Files/Year 3 Term 3/LBBBI27/Activity 7/morphology_data.csv")
+```
+
+## Step 3: Remove the sex column.
+```{r}
+morphonew <- subset(morphodata, select = -c(Sex, Pop))
+```
+
+## Step 4: Ensure that the dataframe has no NAs.
+```{r}
+morphoclean <- morphonew[complete.cases(morphonew), ]
+```
+
+## Step 5: Prior to performing K-means, standardize all values using the “scale” function.
+```{r}
+morphoscaled <- scale(morphoclean)
+```
+
+## Step 6: Perform K-means with 3 cluster centers using 25 initial random centroids.
+```{r}
+kmeans1 <- kmeans(morphoscaled, centers = 3, nstart = 25)
+```
+
+## Step 7: Show the cluster assignment and a summary of results by simply printing them to the console.
+```{r}
+head(kmeans1$cluster)
+kmeans1
+```
+
+## Step 8: Create a scatter plot with points colored by the assigned cluster.
+```{r, fig.width=6, fig.height=4}
+plot (
+  morphoscaled[, 1:2],
+  col = kmeans1$cluster,
+  main = "K-means Clustering of Philippine Green Crested Lizards Data"
+  )
+```
+
+# K-means (loop)
+## Step 1: Now, create a loop function to perform K-means with cluster centers from 2 to 10.
+```{r}
+ss <- numeric(10)
+
+for(k in 2:10) {
+  kmeans2 <- kmeans(morphoscaled, centers = k, nstart = 25)
+  ss[k] <- kmeans2$tot.withinss
+}
+```
+
+## Step 2: From the output of your loop function, create an elbow curve plot to determine the optimal K.
+```{r, fig.width=6, fig.height=4}
+library(factoextra)
+fviz_nbclust(
+  morphoscaled,
+  kmeans,
+  method = "wss",
+  k.max = 10
+  )
+```
+
+## Step 3: Recreate steps 6–8 above using the optimal K determined by the elbow curve.
+## 3a
+```{r}
+kmeans3 <- kmeans(morphoscaled, centers = 2, nstart = 25)
+```
+## 3b
+```{r}
+head(kmeans3$cluster)
+kmeans3
+```
+## 3c
+```{r, fig.width=6, fig.height=4}
+plot (
+  morphoscaled[, 1:2],
+  col = kmeans3$cluster,
+  main = "K-means Re-clustering of Philippine Green Crested Lizards Data"
+  )
+```
