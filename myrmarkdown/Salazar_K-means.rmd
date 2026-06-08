@@ -51,7 +51,7 @@ plot (
 ```{r}
 ss <- numeric(10)
 
-for(k in 2:10) {
+for(k in 1:10) {
   kmeans2 <- kmeans(morphoscaled, centers = k, nstart = 25)
   ss[k] <- kmeans2$tot.withinss
 }
@@ -66,6 +66,10 @@ fviz_nbclust(
   method = "wss",
   k.max = 10
   )
+```
+```{r, fig.width=6, fig.height=4}
+plot(1:10, ss, type = "b", pch = 19, frame = FALSE, 
+        main = "Elbow Method")
 ```
 
 ## Step 3: Recreate steps 6–8 above using the optimal K determined by the elbow curve.
