@@ -1,0 +1,101 @@
+---
+title: 'Activty 8: Hierarchical Clustering'
+author: "Jae Salazar"
+date: "2026-06-10"
+output: html_document
+---
+
+# A: Hierarchical Clustering
+## Step 2: Read in the morphology data as a dataframe.
+```{r}
+morphodata <- read.csv("D:/Files/DLSU Files/Year 3 Term 3/LBBBI27/Activity 7/morphology_data.csv")
+```
+
+## Step 3: Remove unnecessary columns (e.g., sex, pop).
+```{r}
+morphonew <- subset(morphodata, select = -c(Sex, Pop))
+```
+
+## Step 4: Ensure that the dataframe has no NAs.
+```{r}
+morphoclean <- morphonew[complete.cases(morphonew), ]
+morphoscaled <- scale(morphoclean)
+```
+
+## Step 5: Before performing hierarchical clustering, calculate the “Euclidean distance” and use it as your input.
+```{r}
+library(cluster)
+d <- dist(morphoscaled, method = "euclidean")
+```
+
+## Step 6: Perform hierarchical clustering using Ward’s and Single Linkage methods.
+## Ward's Method
+```{r, fig.width=8, fig.height=6}
+morpho_ward <- hclust(d, method = "ward.D2")
+plot(morpho_ward,
+  main = "Ward's Method Clustering of PH Green Crested Lizards",
+  labels = morphodata$Pop,
+  cex = 0.5)
+```
+## Single Linkage Method
+```{r, fig.width=8, fig.height=6}
+morpho_single <- hclust(d, method = "single")
+plot(morpho_single,
+  main = "Single Linkage Clustering of PH Green Crested Lizards",
+  labels = morphodata$Pop,
+  cex = 0.5)
+```
+
+## Step 7: Create a for loop function to explore Ks from 2 to 10 for each method using the Silhouette score and display the results with a plot.
+## Ward's Method
+```{r, fig.width=8, fig.height=6}
+morphoward_2 <- numeric(10)
+
+for(k in 2:10) {
+  morphoward_clusters <- cutree(morpho_ward, k)
+  morphoward_sil <- silhouette(morphoward_clusters, d)
+  morphoward_2[k] <- mean(morphoward_sil[, 3])
+}
+
+plot(1:10, morphoward_2, type="b", pch=19, xlab="Number of Clusters", ylab="Silhouette Width", main="Silhouette Scores for Ward Method Clustering")
+```
+
+## Single Linkages Method
+```{r, fig.width=8, fig.height=6}
+morphosingle_2 <- numeric(10)
+
+for(k in 2:10) {
+  morphosingle_clusters <- cutree(morpho_single, k)
+  morphosingle_sil <- silhouette(morphosingle_clusters, d)
+  morphosingle_2[k] <- mean(morphosingle_sil[, 3])
+}
+
+plot(1:10, morphosingle_2, type="b", pch=19, xlab="Number of Clusters", ylab="Silhouette Width", main="Silhouette Scores for Ward Method Clustering")
+```
+
+
+## Step 8: Now, generate a dendrogram for each method, highlighting the optimal K with colored boxes.
+## Ward's Method
+```{r, fig.width=8, fig.height=6}
+plot(morpho_ward,
+  main = "Ward's Method Clustering of PH Green Crested Lizards",
+  labels = morphodata$Pop,
+  cex = 0.5)
+rect.hclust(morpho_ward, k = 2, border = c("red", "blue"))
+```
+
+## Single Linkages Method
+```{r, fig.width=8, fig.height=6}
+plot(morpho_single,
+  main = "Single Linkage Clustering of PH Green Crested Lizards",
+  labels = morphodata$Pop,
+  cex = 0.5)
+rect.hclust(morpho_ward, k = 2, border = c("red", "blue"))
+```
+
+# B. K-means vs. Hierarchical
+## 1. Revisit your K-means outputs from the previous activity and compare how the clusters were determined.
+Both cluster determining methods allowed for some sort of graphical representation that any data scientist could easily refer to for determining the optimal number of clusters. However, the hierarchical method we learned today seemed more intuitive to me, as the elbow plot method may tend to be subjective to the viewer on where the bend is. This may become especially true when the elbow plot does not seem too drastic in change.
+
+## 2. Are the clusters consistent? If not, what do you think causes this, and how might it influence your interpretation of biological patterns in the data?
+Fortunately, the clusters have been consistent in both methods. If there were inconsistencies, one reason I could point toward is again the possible subjectivity of the elbow plot method, which may not provide a clearer optimal number of clusters when the graph's shape is more gradual than drastic.
