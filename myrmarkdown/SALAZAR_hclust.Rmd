@@ -1,5 +1,5 @@
 ---
-title: 'Activty 8: Hierarchical Clustering'
+title: 'Activity 8: Hierarchical Clustering'
 author: "Jae Salazar"
 date: "2026-06-10"
 output: html_document
