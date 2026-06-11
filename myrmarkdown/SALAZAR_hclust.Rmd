@@ -37,6 +37,7 @@ plot(morpho_ward,
   labels = morphodata$Pop,
   cex = 0.5)
 ```
+
 ## Single Linkage Method
 ```{r, fig.width=8, fig.height=6}
 morpho_single <- hclust(d, method = "single")
