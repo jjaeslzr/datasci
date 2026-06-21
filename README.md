@@ -10,3 +10,5 @@ This repository contains files from projects in our LIFEDAT/LBBBI27 classes for 
 **Activity 7: Clustering (K-means)**: [https://jjaeslzr.github.io/datasci/myrmarkdown/Salazar_K-means.html](https://jjaeslzr.github.io/datasci/myrmarkdown/Salazar_K-means.html)
 
 **Activity 8: Hierarchical Clustering**: [https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_hclust.html](https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_hclust.html)
+
+**Activity 9: Principal Components Analysis**: [https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_PCA.html](https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_PCA.html)
