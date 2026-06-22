@@ -12,3 +12,5 @@ This repository contains files from projects in our LIFEDAT/LBBBI27 classes for 
 **Activity 8: Hierarchical Clustering**: [https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_hclust.html](https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_hclust.html)
 
 **Activity 9: Principal Components Analysis**: [https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_PCA.html](https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_PCA.html)
+
+**Activity 10: GIS**: [https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_gis.html](https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_gis.html)
