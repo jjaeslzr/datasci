@@ -47,8 +47,8 @@ richelev
 
 ## 7. Now, perform simple linear regression using the code from the pre-lab lecture, including a plot. What can you infer about the relationship between species and elevation? ##
 ```{r, fig.width = 10, fig.height = 5}
-x <- richelev$Richness
-y <- richelev$Elevation
+x <- richelev$Elevation
+y <- richelev$Richness
 xbar <- mean(x)
 ybar <- mean(y)
 b <- sum((x - xbar) * (y - ybar)) / sum((x - xbar)^2)
