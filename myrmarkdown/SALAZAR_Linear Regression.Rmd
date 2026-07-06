@@ -1,0 +1,122 @@
+---
+title: "Activity 11 - Linear Regression"
+author: "Jae Salazar"
+date: "2026-07-05"
+output: html_document
+---
+## Load all libraries. ##
+```{r}
+library(sf)
+library(terra)
+library(dplyr)
+```
+
+# Simple linear regression #
+
+## 2. Read in the species data and remove unnecessary rows with NAs. ##
+```{r}
+herpedata <- data.frame(read.csv("D:/Files/DLSU Files/Year 3 Term 3/LBBBI27/Activity 3/herpetozoa-033-095-s001.csv"))
+cleaningdata <- complete.cases(herpedata)
+herpeclean <- herpedata[cleaningdata, ]
+```
+
+## 3. Read in the elevation data (ph_strm_geo.tif). ##
+```{r}
+phil_dem <- rast("D:/Files/DLSU Files/Year 3 Term 3/LBBBI27/Activity 10/ph_ strm_geo.tif")
+```
+
+## 4. From the species data, subset the longitude and latitude coordinates. Then convert the coordinates to a spatial vector using the “vect” function from the “terra” package. ##
+```{r}
+herpecoord <- herpeclean[2:3]
+coord <- vect(herpecoord)
+```
+
+## 5. Using the converted coordinates, extract elevation data for each point with the “extract” function in the “terra” package. The extracted data will have two columns: “ID” and “Band_1.” The “Band_1” column contains the elevation. ##
+```{r}
+coordelev <- extract(phil_dem, coord)
+```
+
+## 6. Subset the species data to retain only the species richness column (SPPTotal). Then combine this column with the extracted elevation. Rename “Band_1” to “elevation.” ##
+```{r}
+richness <- herpeclean$SPPTotal
+richelev <- cbind(richness, coordelev$Band_1)
+colnames(richelev) <- c("Richness", "Elevation")
+richelev <- as.data.frame(richelev)
+richelev
+```
+
+## 7. Now, perform simple linear regression using the code from the pre-lab lecture, including a plot. What can you infer about the relationship between species and elevation? ##
+```{r, fig.width = 10, fig.height = 5}
+x <- richelev$Richness
+y <- richelev$Elevation
+xbar <- mean(x)
+ybar <- mean(y)
+b <- sum((x - xbar) * (y - ybar)) / sum((x - xbar)^2)
+a <- ybar - b * xbar
+cat("Regression Equation:\n")
+cat("y=", round(a,3), "+", round(b,3), "x\n")
+yhat <- a + b * x
+plot(x, y,
+  pch = 19,
+  col = "forestgreen",
+  xlab = "Elevation (m)",
+  ylab = "Species Richness",
+  main = "Simple Linear Regression Model")
+abline(a, b, col = "goldenrod4", lwd = 2)
+points(x, yhat, pch = 17, col = "mediumblue", cex = 1.2)
+segments (x0 = x, y0 = y, x1 = x, y1 = yhat, lty = 2, col = "darkorange")
+legend("topright",
+  legend = c("Observed", "Predicted", "Regression Line"),
+  pch = c(19, 17, NA),
+  lty = c(NA, NA, 1),
+  col = c("forestgreen", "mediumblue",  "goldenrod4"),
+  lwd = c(NA, NA, 2),
+  bty = "n")
+```
+
+While the observed values seem to be more spread out across elevations, the best fitted line predicts that species richness increases as elevation decreases.
+
+# B. Multiple linear regression #
+## 1. Read in both annual precipitation and temperature data and extract the data following the instructions from A4–5. ##
+```{r}
+phil_rain <- rast("D:/Files/DLSU Files/Year 3 Term 3/LBBBI27/Activity 11/annual_precipitation.tif")
+phil_temp <- rast("D:/Files/DLSU Files/Year 3 Term 3/LBBBI27/Activity 11/annual_temperature.tif")
+coordrain <- extract(phil_rain, coord)
+coordtemp <- extract(phil_temp, coord)
+```
+
+## 2. Combine the extracted data with the species and elevation data into a single dataframe. ##
+```{r}
+combined <- cbind(richness, coordelev$Band_1, coordrain$annual_precipitation, coordtemp$annual_temperature)
+colnames(combined) <- c("Richness", "Elevation", "Annual Precipitation", "Annual Temperature")
+combined <- as.data.frame(combined)
+```
+
+## 3. Perform multiple linear regression using the “lm” function.
+```{r}
+x <- combined$Elevation
+x1 <- combined$`Annual Precipitation`
+x2 <- combined$`Annual Temperature`
+y <- combined$Richness
+model <- lm(y ~ x + x1 + x2)
+coef(model)
+a <- coef(model)[1]
+b <- coef(model)[2]
+c <- coef(model)[3]
+d <- coef(model)[4]
+cat("Regression Equation:\n")
+cat("y=", round(a,3), "+", round(b,3), "x", "+", round(c,3), "x1", "+", round(d,3), "x2\n\n")
+yhat <- predict(model)
+residuals <- residuals(model)
+results <- data.frame(
+  Elevation = x,
+  "Annual Precipitation" = x1,
+  "Annual Temperature" = x2,
+  Observed = y,
+  Predicted = round(yhat,2),
+  Residual = round(residuals,2)
+)
+print(results)
+summary(model)
+```
+The computed model shows that **the annual precipitation and annual temperature readings had significance levels of less than 0.05.** Thus, **these variables showed statistical significance in predicting the levels of species richness.**
