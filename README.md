@@ -14,3 +14,5 @@ This repository contains files from projects in our LIFEDAT/LBBBI27 classes for 
 **Activity 9: Principal Components Analysis**: [https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_PCA.html](https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_PCA.html)
 
 **Activity 10: GIS**: [https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_gis.html](https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_gis.html)
+
+**Activity 11: Linear Regression**: [https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_Linear-Regression.html](https://jjaeslzr.github.io/datasci/myrmarkdown/SALAZAR_Linear-Regression.html)
