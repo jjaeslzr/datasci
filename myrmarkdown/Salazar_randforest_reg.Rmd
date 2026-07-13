@@ -1,0 +1,79 @@
+---
+title: "Random Forest regression"
+author: "Jae Salazar"
+date: "2026-07-13"
+output: html_document
+---
+
+## 2. Read in the acoustic data and remove unnecessary columns (i.e., column 1). Remember that your response variable is the species column. ##
+```{r}
+acousticdata <- data.frame(read.csv("D:/Files/DLSU Files/Year 3 Term 3/LBBBI27/Activity 13/call_data_12October2025.csv"))
+acousticlean <- acousticdata[complete.cases(acousticdata), ]
+acousticlean$File_Name <- NULL
+acousticlean$Species <- as.factor(acousticlean$Species)
+```
+
+## 3. Design your Cartesian grid and perform a random forest that iterates on each hyperparameter combination. ##
+```{r}
+library(randomForest)
+library(ranger)
+
+mtry <- floor(sqrt(ncol(acousticlean) -1))
+
+grid <- expand.grid(
+  num.trees = c(100, 200, 300, 400, 500),
+  mtry = 3,
+  min.node.size = c(1, 2, 3, 4, 5)
+)
+
+results <- data.frame(
+  num.trees = numeric(),
+  mtry = numeric(),
+  min.node.size = numeric(),
+  accuracy = numeric(),
+  oob.error = numeric()
+)
+
+for(i in 1:nrow(grid)){
+  model <- ranger(
+    Species ~ .,
+    data = acousticlean,
+    num.trees = grid$num.trees[i],
+    mtry = grid$mtry[i],
+    min.node.size = grid$min.node.size[i]
+  )
+     
+  pred <- predict(model, data = acousticlean)$predictions
+  acc <- mean(pred == acousticlean$Species)
+  results <- rbind(
+    results,
+    cbind(grid[i,], accuracy = acc, oob.error = model$prediction.error)
+  )
+}
+```
+
+## 4. Pick the best hyperparameter combination that minimizes the out-of-bag error. ##
+```{r}
+results[which.min(results$oob.error), ]
+```
+
+## 5. Using the optimal hyperparameter, provide a plot of variable importance and the predicted class probabilities. ##
+```{r, fig.width = 8, fig.height = 8}
+library(rpart)
+library(rpart.plot)
+
+response <- "Species"
+set.seed(123)
+ntree <- 100
+rf_model <- randomForest(
+  Species ~ .,          
+  data = acousticlean,
+  ntree = ntree,
+  mtry = mtry,
+  importance = TRUE
+)
+
+varImpPlot(rf_model)
+
+rpart.plot(rpart(Species ~ ., data = acousticlean))
+```
