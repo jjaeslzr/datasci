@@ -1,0 +1,303 @@
+---
+title: "Gradient Boosting"
+author: "Cabalar, Salazar, Wang"
+date: "20 July 2026"
+---
+
+## 1. What is Gradient Boosting?
+
+Gradient boosting is an ensemble (supervised) machine learning method that
+builds a strong predictive model by combining many weak learners,
+usually shallow decision trees, in a sequential manner.
+
+Unlike a model that is trained once, gradient boosting builds trees one
+after another, where each new tree is trained to correct the errors
+(residuals) made by the combination of all previous trees. The final
+prediction is the sum of the predictions of all the trees, each one
+scaled down by a learning rate.
+
+### How is this different from Random Forest?
+
+| Aspect | Random Forest | Gradient Boosting |
+|---|---|---|
+| Tree building | Trees are built independently, in parallel | Trees are built sequentially, each depending on the last |
+| Data used | Each tree uses a bootstrap sample of the data | Each tree uses the whole dataset, but fits the residual errors of the previous trees |
+| Goal of each tree | Predict the response directly | Predict the *error* left over by earlier trees |
+| Combining predictions | Majority vote (classification) or average (regression) | Additive: predictions are summed together, each weighted by a learning rate |
+| Overfitting control | Averaging many deep, independent trees reduces variance | Achieved through learning rate, tree depth, and number of trees; more prone to overfitting if not tuned |
+| Sensitivity to outliers | Less sensitive | More sensitive, since it keeps fitting residuals |
+
+In short, Random Forest reduces variance by averaging many independent
+trees built from randomized data, while Gradient Boosting reduces bias
+by having each new tree specifically target the mistakes of the trees
+before it.
+
+## 2. Types of Gradient Boosting Implementations
+
+Like Random Forest, gradient boosting can be implemented differently
+depending on the type of the response variable.
+
+### A. Regression Gradient Boosting
+
+Used when the response variable is continuous. Each new tree is fit to
+the residuals (actual value minus current prediction) of the previous
+ensemble. The loss function is typically the squared error, so the
+residuals used to fit each tree are simply the pseudo-residuals
+$y_i - F_{m-1}(x_i)$.
+
+### B. Classification Gradient Boosting
+
+Used when the response variable is categorical. Instead of fitting
+residuals of the raw class labels, the model works on the predicted
+*log-odds* (for binary outcomes) or class probabilities, and the
+pseudo-residuals are derived from the gradient of a loss function such
+as log-loss (deviance). The predicted probabilities are converted back
+to classes using the logistic (sigmoid) or softmax function.
+
+### C. Popular Software Implementations
+
+Aside from the classic (regression/classification) split above,
+gradient boosting is also commonly grouped by the specific algorithm/
+library used to implement it, since each one adds its own
+optimizations:
+
+- **GBM (Gradient Boosting Machine)** — the classic, general-purpose
+  implementation described above (e.g., R's `gbm` package).
+- **XGBoost (Extreme Gradient Boosting)** — adds regularization and
+  second-order gradient information for faster, more accurate models.
+- **LightGBM** — uses histogram-based, leaf-wise tree growth for speed
+  on large datasets.
+- **CatBoost** — designed to natively handle categorical predictors
+  without manual encoding.
+
+## 3. Chosen Implementation: Regression Gradient Boosting
+
+For this activity, **Regression Gradient Boosting** was chosen. The
+general steps (studied with the help of AI) are:
+
+**STEPS:**
+
+a. Prepare the dataset
+b. Specify the response variable
+c. Initialize the model with a constant prediction (the mean of Y)
+d. Compute pseudo-residuals (actual value minus current prediction)
+e. Fit a weak learner (a decision stump) to the pseudo-residuals
+f. Find the split that minimizes the Sum of Squared Errors (SSE) of the residuals
+g. Update the overall prediction by adding the new tree's prediction, scaled by a learning rate
+h. Repeat steps d–g for a set number of trees (iterations)
+i. Track training error across iterations
+j. Combine all trees to get the final prediction
+
+$$F_m(x) = F_{m-1}(x) + \nu \cdot h_m(x)$$
+
+where
+
+- $F_{m-1}(x)$ = prediction from the ensemble so far
+- $h_m(x)$ = prediction of the new tree, fit on the residuals
+- $\nu$ = learning rate (shrinkage), controls how much each tree contributes
+
+## 4. Manual R Implementation (No Packages)
+
+### Step a. Prepare the dataset
+
+```{r}
+data(iris)
+
+## Predictor variables
+X <- iris[, c("Sepal.Width", "Petal.Length", "Petal.Width")]
+
+## Response variable (continuous)
+Y <- iris$Sepal.Length
+
+## Number of observations
+n <- nrow(iris)
+```
+
+### Step b. Specify the response variable
+
+```{r}
+response <- "Sepal.Length"
+```
+
+### Step c. Initialize the model
+
+```{r}
+## Start with the simplest possible model: predict the mean for everyone
+F0 <- mean(Y)
+prediction <- rep(F0, n)
+
+cat("Initial prediction (mean of Y):", F0, "\n")
+```
+
+### Steps d–f. Function to fit one decision stump to residuals
+
+```{r}
+## A "stump" is a decision tree with only one split.
+## It finds the variable and split point that best
+## reduces the Sum of Squared Errors (SSE) of the residuals.
+
+train_stump <- function(X, residuals){
+
+  best_sse <- Inf
+  best_variable <- NA
+  best_split <- NA
+  best_left_pred <- NA
+  best_right_pred <- NA
+
+  for(variable in names(X)){
+    values <- sort(unique(X[[variable]]))
+    if(length(values) < 2)
+      next
+    splits <- (values[-1] + values[-length(values)]) / 2
+
+    for(split in splits){
+      left_idx <- X[[variable]] <= split
+      right_idx <- !left_idx
+
+      if(sum(left_idx) == 0 || sum(right_idx) == 0)
+        next
+
+      left_pred <- mean(residuals[left_idx])
+      right_pred <- mean(residuals[right_idx])
+
+      sse <-
+        sum((residuals[left_idx] - left_pred)^2) +
+        sum((residuals[right_idx] - right_pred)^2)
+
+      if(sse < best_sse){
+        best_sse <- sse
+        best_variable <- variable
+        best_split <- split
+        best_left_pred <- left_pred
+        best_right_pred <- right_pred
+      }
+    }
+  }
+
+  list(
+    variable = best_variable,
+    split = best_split,
+    left_pred = best_left_pred,
+    right_pred = best_right_pred,
+    sse = best_sse
+  )
+}
+```
+
+### Steps d–j. Boosting loop
+
+```{r}
+set.seed(123)
+
+## Number of boosting iterations (trees)
+n_trees <- 50
+
+## Learning rate (shrinkage)
+learning_rate <- 0.1
+
+## Store each stump and the training error per iteration
+stumps <- vector("list", n_trees)
+train_mse <- numeric(n_trees)
+
+for(m in 1:n_trees){
+
+  ## Step d. Compute pseudo-residuals
+  residuals <- Y - prediction
+
+  ## Step e-f. Fit a stump to the residuals
+  stump <- train_stump(X, residuals)
+  stumps[[m]] <- stump
+
+  ## Get this stump's prediction for every observation
+  left_idx <- X[[stump$variable]] <= stump$split
+  stump_pred <- ifelse(left_idx, stump$left_pred, stump$right_pred)
+
+  ## Step g. Update overall prediction (with shrinkage)
+  prediction <- prediction + learning_rate * stump_pred
+
+  ## Step i. Track training error
+  train_mse[m] <- mean((Y - prediction)^2)
+
+  cat("Tree", m,
+      "- Variable:", stump$variable,
+      "- Training MSE:", round(train_mse[m], 4), "\n")
+}
+```
+
+### Step j. Final prediction
+
+```{r}
+cat("\nFinal predictions (first 6 observations):\n")
+print(head(prediction))
+
+cat("\nActual values (first 6 observations):\n")
+print(head(Y))
+
+## Final training MSE
+cat("\nFinal Training MSE:", round(train_mse[n_trees], 4), "\n")
+```
+
+### Visualize training error across boosting iterations
+
+```{r}
+plot(train_mse,
+     type = "l",
+     col = "black",
+     lwd = 2,
+     xlab = "Number of Trees",
+     ylab = "Training MSE",
+     main = "Training Error vs Number of Trees (Gradient Boosting)")
+```
+
+### Predict a new observation using all trees
+
+```{r}
+new_flower <- iris[1, ]
+
+## Start from the initial constant prediction
+new_prediction <- F0
+
+for(m in 1:n_trees){
+  stump <- stumps[[m]]
+  if(new_flower[[stump$variable]] <= stump$split){
+    step_pred <- stump$left_pred
+  } else{
+    step_pred <- stump$right_pred
+  }
+  new_prediction <- new_prediction + learning_rate * step_pred
+}
+
+cat("Actual Sepal.Length :", new_flower$Sepal.Length, "\n")
+cat("Predicted Sepal.Length:", round(new_prediction, 3), "\n")
+```
+
+## 5. Using the "gbm" Package (For Comparison)
+
+```{r message=FALSE, warning=FALSE}
+## Install package (run once)
+## install.packages("gbm")
+
+library(gbm)
+
+set.seed(123)
+
+gbm_model <- gbm(
+  Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width,
+  data = iris,
+  distribution = "gaussian",   ## regression
+  n.trees = 50,
+  shrinkage = 0.1,
+  interaction.depth = 1        ## depth 1 = decision stump
+)
+
+## View model summary and variable importance
+summary(gbm_model)
+
+## Predictions using all 50 trees
+gbm_predictions <- predict(gbm_model, n.trees = 50)
+
+## Compare training MSE with the manual implementation
+gbm_mse <- mean((iris$Sepal.Length - gbm_predictions)^2)
+cat("gbm package Training MSE:", round(gbm_mse, 4), "\n")
+cat("Manual implementation Training MSE:", round(train_mse[n_trees], 4), "\n")
+```
